@@ -42,5 +42,8 @@ private:
     QVector<QPoint> m_points;
 
     bool isPaintLinesClicked = false;
+
+private:
+    QVector<QRect> m_detectedRegions;
 };
 #endif // DRAWINGCANVAS_H

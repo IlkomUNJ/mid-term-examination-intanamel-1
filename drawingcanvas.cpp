@@ -22,34 +22,29 @@ void DrawingCanvas::paintLines(){
     update();
 }
 
-void DrawingCanvas::segmentDetection(){
-    QPixmap pixmap = this->grab(); //
+void DrawingCanvas::segmentDetection() {
+    QPixmap pixmap = this->grab();
     QImage image = pixmap.toImage();
 
     cout << "image width " << image.width() << endl;
     cout << "image height " << image.height() << endl;
 
-    //To not crash we set initial size of the matrix
-    vector<CustomMatrix> windows(image.width()*image.height());
+    QVector<QRect> detectedRegions;
 
-    // Get the pixel value as an ARGB integer (QRgb is a typedef for unsigned int)
-    for(int i = 1; i < image.width()-1;i++){
-        for(int j = 1; j < image.height()-1;j++){
-            bool local_window[3][3] = {false};
-
-            for(int m=-1;m<=1;m++){
-                for(int n=-1;n<=1;n++){
-                    QRgb rgbValue = image.pixel(i+m, j+n);
-                    local_window[m+1][n+1] = (rgbValue != 0xffffffff);
-                }
+    for (int y = 1; y < image.height() - 1; y++) {
+        for (int x = 1; x < image.width() - 1; x++) {
+            QColor color(image.pixel(x, y));
+            if (color != Qt::white) {
+                detectedRegions.append(QRect(x - 2, y - 2, 5, 5));
             }
-
-            CustomMatrix mat(local_window);
-
-            windows.push_back(mat);
         }
     }
-    return;
+
+    m_detectedRegions = detectedRegions;
+
+    cout << "Detected " << detectedRegions.size() << " regions" << endl;
+
+    update();
 }
 
 void DrawingCanvas::paintEvent(QPaintEvent *event){
